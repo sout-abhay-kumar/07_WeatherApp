@@ -1,4 +1,4 @@
-// src/services/weatherApi.js
+// src/services/weatherApi.jsx
 import axios from "axios";
 
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY; 
@@ -10,8 +10,8 @@ const api = axios.create({
 
 // Attach apikey automatically to every request
 api.interceptors.request.use((config) => {
-  config.params.apikey = API_KEY;
   config.params = config.params || {};
+  config.params.apikey = API_KEY;
   return config;
 });
 
@@ -26,18 +26,15 @@ export async function getLocationKey(city) {
   if (!Array.isArray(res.data) || res.data.length === 0) {
     throw new Error("Location not found");
   }
-  return res.data; 
+  return res.data[0].Key; 
 }
 
-/**
- * Get current conditions using locationKey
- */
 export async function getCurrentConditions(locationKey) {
   const res = await api.get(`/currentconditions/v1/${locationKey}`);
   if (!Array.isArray(res.data) || res.data.length === 0) {
     throw new Error("No current conditions returned");
   }
-  return res.data[0];
+  return res.data[0]; // returns current weather object
 }
 
 export default api;

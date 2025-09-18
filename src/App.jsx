@@ -1,7 +1,7 @@
-import "./App.css"
+import "./Styles/App.css"
 import SearchBar from "./Components/SearchBar"
 import WeatherCard from "./Components/WeatherCard"
-import WeatherApi from "./Services/WeatherApi"
+
 
 function App() {
   return (
