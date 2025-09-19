@@ -4,9 +4,10 @@ import rainy from "../assets/rainy.jpg";
 import WeatherContext from "../Context/WeatherContext";
 import Spinner from "./Spinner";
 import InfoDiv from "./InfoDiv";
+import ApiFails from "./ApiFails";
 
 function WeatherCard() {
-  const { weather, city, loading } = useContext(WeatherContext);
+  const { weather, city, loading, hasError, forecast } = useContext(WeatherContext);
   const [text, setText] = useState("");
 
   // Update text when city changes
@@ -20,7 +21,11 @@ function WeatherCard() {
 
 if (loading) {
   return <Spinner />;
-} else if (!weather) {
+  }
+  if (hasError) {
+  return <ApiFails />;
+}
+  if (!weather) {
   return <InfoDiv />;
 }
 
@@ -38,20 +43,21 @@ if (loading) {
             src={weatherImage}
             alt={weather.WeatherText}
           />
-          <div className="px-6 py-4">
-            <div className="font-bold text-xl mb-2">
+          <div className="px-6 pt-4">
+            <div className="font-bold mb-5 font-mono text-2xl">
               {text} : {weather.WeatherText}
             </div>
-            <p className="text-gray-700 text-base">
-              Temprature in Celcius: {weather.Temperature.Metric.Value}{" "}
+            <hr/>
+            <p className="text-gray-700 text-xl font-sans py-4">
+              Temprature in Celcius: {weather.Temperature.Metric.Value}°
               {weather.Temperature.Metric.Unit}
             </p>
-            <p className="text-gray-700 text-base">
-              Temprature in Fahrenheit: {weather.Temperature.Imperial.Value}{" "}
+            <p className="text-gray-700 text-xl font-sans">
+              Temprature in Fahrenheit: {weather.Temperature.Imperial.Value}°
               {weather.Temperature.Imperial.Unit}
             </p>
           </div>
-          <div className="px-6 pt-4 pb-2">
+          <div className="px-6 pt-9 mt-10 pb-2">
             <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
               #weather
             </span>
@@ -63,25 +69,31 @@ if (loading) {
             </span>
           </div>
         </div>
-        <div className="max-w-md rounded overflow-hidden shadow-lg mx-10 text-center">
-          <div className="font-bold text-xl mb-2">The Coldest Sunset</div>
-          <p className="text-gray-700 text-base">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-            Voluptatibus quia, nulla! Maiores et perferendis eaque,
-            exercitationem praesentium nihil.
-          </p>
-          <div className="px-6 pt-4 pb-2">
-            <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-              #cloudy
-            </span>
-            <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-              #rainy
-            </span>
-            <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-              #sunny
-            </span>
+        {forecast && (
+          <div className="w-140 rounded overflow-hidden shadow-lg mx-10 text-center">
+            <div className="font-bold text-xl py-10">Future Forecast : {forecast.Headline.Text}</div>
+
+            {forecast.DailyForecasts.map((day, idx) => (
+              <p key={idx} className="text-gray-700 text-base my-10">
+                {new Date(day.Date).toDateString()} - {day.Day.IconPhrase} |
+                Min: {day.Temperature.Minimum.Value}°
+                {day.Temperature.Minimum.Unit}, Max:{" "}
+                {day.Temperature.Maximum.Value}°{day.Temperature.Maximum.Unit}
+              </p>
+            ))}
+            <div className="px-6 pt-4 pb-2">
+              <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                #cloudy
+              </span>
+              <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                #rainy
+              </span>
+              <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                #sunny
+              </span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );

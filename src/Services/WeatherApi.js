@@ -37,4 +37,9 @@ export async function getCurrentConditions(locationKey) {
   return res.data[0]; // returns current weather object
 }
 
+export async function getFiveDayForecast(locationKey) {
+  const res = await api.get(`/forecasts/v1/daily/5day/${locationKey}`);
+  return res.data; // includes headline + daily forecasts
+}
+
 export default api;
